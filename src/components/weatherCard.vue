@@ -15,14 +15,7 @@
         : 'background: #FFD700'
     "
   >
-    <div
-      style="
-        display: flex;
-        align-items: center;
-        padding: 0px 30px;
-        width: calc(100% - 60px);
-      "
-    >
+    <div class="cardMain">
       <p style="font-size: 30px; color: white">
         {{ parseInt(weather?.main?.temp - 273.15) }} °C
       </p>
@@ -140,12 +133,36 @@ export default {
 </script>
 
 <style scoped>
-.weatherCard {
-  width: 50%;
-  border-radius: 20px;
-  height: max-content;
-  background: #b0c4de;
-  user-select: none;
-  box-shadow: 5px 5px 10px 0px silver;
+@media only screen and (max-width: 1023px) {
+  .cardMain {
+    display: flex;
+    align-items: center;
+    padding: 0px 10px;
+    width: calc(100% - 20px);
+  }
+  .weatherCard {
+    width: 100%;
+    border-radius: 20px;
+    height: max-content;
+    background: #b0c4de;
+    user-select: none;
+    box-shadow: 5px 5px 10px 0px silver;
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .cardMain {
+    display: flex;
+    align-items: center;
+    padding: 0px 30px;
+    width: calc(100% - 60px);
+  }
+  .weatherCard {
+    width: 50%;
+    border-radius: 20px;
+    height: max-content;
+    background: #b0c4de;
+    user-select: none;
+    box-shadow: 5px 5px 10px 0px silver;
+  }
 }
 </style>

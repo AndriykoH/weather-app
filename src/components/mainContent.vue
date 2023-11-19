@@ -219,17 +219,33 @@ export default {
 </script>
 
 <style scoped>
-.mainContentBackground {
-  padding: 20px;
-  margin: 20px 0px;
+@media only screen and (max-width: 1023px) {
+  .mainContentBackground {
+    padding: 20px 0px;
+    margin: 20px 0px;
+  }
+  .cityAutocomplete {
+    width: 80svw;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 18px;
+    border-color: #3badf6;
+    padding: 0px 10px;
+  }
 }
-.cityAutocomplete {
-  width: 30svw;
-  height: 40px;
-  border-radius: 10px;
-  font-size: 18px;
-  border-color: #3badf6;
-  padding: 0px 10px;
+@media only screen and (min-width: 1024px) {
+  .mainContentBackground {
+    padding: 20px;
+    margin: 20px 0px;
+  }
+  .cityAutocomplete {
+    width: 30svw;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 18px;
+    border-color: #3badf6;
+    padding: 0px 10px;
+  }
 }
 .cityList {
   width: 30svw;
