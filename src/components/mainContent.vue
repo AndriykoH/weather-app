@@ -38,6 +38,7 @@
       />
       <div v-else style="font-size: 22px">Введіть будь ласка ваше місто</div>
     </div>
+    <line-chart-generator v-if="!showLoader" :data="charData" />
   </div>
 </template>
 
@@ -45,8 +46,28 @@
 import axios from "axios";
 import weatherCard from "./weatherCard.vue";
 import Loader from "./UI/Loader.vue";
+import { Line as LineChartGenerator } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  LinearScale,
+  CategoryScale,
+  PointElement,
+} from "chart.js";
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  LinearScale,
+  CategoryScale,
+  PointElement
+);
 export default {
-  components: { weatherCard, Loader },
+  components: { weatherCard, Loader, LineChartGenerator },
   data: () => ({
     cityList: [],
     isChoose: false,
@@ -54,6 +75,16 @@ export default {
     weather: {},
     city: {},
     timeout: null,
+    charData: {
+      labels: [],
+      datasets: [
+        {
+          label: "Температура (°C)",
+          backgroundColor: "#3badf6",
+          data: [],
+        },
+      ],
+    },
   }),
   mounted() {
     this.getUserIP();
@@ -95,6 +126,7 @@ export default {
             .then((res) => {
               if (res.status == 200) {
                 this.cityList = res.data;
+                console.log("cityList", this.cityList);
               }
             });
         }, 200);
@@ -105,7 +137,7 @@ export default {
         .get(
           `https://api.openweathermap.org/data/2.5/weather?lat=${this.city.lat}&lon=${this.city.lon}&lang=ua&appid=9fb5b79525964f9dd610d8d3dd80f9d3`
         )
-        .then((res) => {
+        .then(async (res) => {
           if (res.status == 200) {
             this.weather = res.data;
             let choosedCity = JSON.parse(localStorage.getItem("choosedCity"));
@@ -115,11 +147,37 @@ export default {
                 ? (this.isChoose = true)
                 : (this.isChoose = false);
             }
-
-            setTimeout(() => {
-              this.showLoader = false;
-            }, 500);
           }
+          if (this.city && this.city.name !== "") {
+            await axios
+              .get(
+                `https://api.openweathermap.org/data/2.5/forecast?q=${this.city.name}&units=metric&appid=9fb5b79525964f9dd610d8d3dd80f9d3`
+              )
+              .then((res) => {
+                if (res.status == 200) {
+                  this.charData.labels = [];
+                  this.charData.datasets[0].data = [];
+                  res.data.list.forEach((city) => {
+                    if (
+                      city.dt_txt.substring(0, 10) ==
+                      new Date().toISOString().substring(0, 10)
+                    ) {
+                      this.charData.labels.push(city.dt_txt.substring(11, 16));
+                      this.charData.datasets?.[0].data.push(
+                        Math.round(city.main.temp)
+                      );
+                    }
+                  });
+                }
+              })
+              .catch(() => {
+                this.showLoader = false;
+              })
+          }
+
+          setTimeout(() => {
+            this.showLoader = false;
+          }, 500);
         });
     },
     addToChoose(id, name) {

@@ -86,7 +86,7 @@
           alt="Weather Icon"
           width="180px"
           height="150px"
-          v-if="weather?.weather?.[0]?.main == 'Clear'"
+          v-else-if="weather?.weather?.[0]?.main == 'Clear'"
           style="object-fit: cover"
         />
         <img
@@ -94,7 +94,7 @@
           alt="Weather Icon"
           width="200px"
           height="150px"
-          v-if="weather?.weather?.[0]?.main == 'Drizzle'"
+          v-else-if="weather?.weather?.[0]?.main == 'Drizzle'"
           style="object-fit: cover"
         />
         <img
@@ -102,7 +102,7 @@
           alt="Weather Icon"
           width="200px"
           height="150px"
-          v-if="weather?.weather?.[0]?.main == 'Rain'"
+          v-else-if="weather?.weather?.[0]?.main == 'Rain'"
           style="object-fit: cover"
         />
         <img
@@ -110,7 +110,15 @@
           alt="Weather Icon"
           width="150px"
           height="140px"
-          v-if="weather?.weather?.[0]?.main == 'Snow'"
+          v-else-if="weather?.weather?.[0]?.main == 'Snow'"
+          style="object-fit: cover"
+        />
+        <img
+          :src="`http://openweathermap.org/img/wn/${weather?.weather?.[0]?.icon}.png`"
+          alt="Weather Icon"
+          width="150px"
+          height="140px"
+          v-else
           style="object-fit: cover"
         />
       </div>
