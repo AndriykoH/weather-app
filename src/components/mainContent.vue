@@ -39,6 +39,12 @@
       <div v-else style="font-size: 22px">Введіть будь ласка ваше місто</div>
     </div>
     <line-chart-generator v-if="!showLoader" :data="charData" />
+    <error-modal v-if="showErrorModal" @close="showErrorModal = false">
+      <p style="font-size: 18px">
+        Для додавання видаліть місто з вибраного тому що максимум можна додати
+        до вибраного <span style="font-weight: 600">5</span> міст
+      </p>
+    </error-modal>
   </div>
 </template>
 
@@ -57,6 +63,7 @@ import {
   CategoryScale,
   PointElement,
 } from "chart.js";
+import ErrorModal from "./UI/ErrorModal.vue";
 ChartJS.register(
   Title,
   Tooltip,
@@ -67,11 +74,12 @@ ChartJS.register(
   PointElement
 );
 export default {
-  components: { weatherCard, Loader, LineChartGenerator },
+  components: { weatherCard, Loader, LineChartGenerator, ErrorModal },
   data: () => ({
     cityList: [],
     isChoose: false,
     showLoader: true,
+    showErrorModal: false,
     weather: {},
     city: {},
     timeout: null,
@@ -172,7 +180,7 @@ export default {
               })
               .catch(() => {
                 this.showLoader = false;
-              })
+              });
           }
 
           setTimeout(() => {
@@ -182,9 +190,13 @@ export default {
     },
     addToChoose(id, name) {
       let choosedList = JSON.parse(localStorage.getItem("choosedCity")) || [];
-      choosedList.push({ id: id, name: name });
-      localStorage.setItem("choosedCity", JSON.stringify(choosedList));
-      this.isChoose = true;
+      if (choosedList.length < 5) {
+        choosedList.push({ id: id, name: name });
+        localStorage.setItem("choosedCity", JSON.stringify(choosedList));
+        this.isChoose = true;
+      } else {
+        this.showErrorModal = true;
+      }
     },
     removeToChoose(id) {
       let choosedList = JSON.parse(localStorage.getItem("choosedCity")) || [];
